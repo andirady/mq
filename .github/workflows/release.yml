@@ -1,0 +1,30 @@
+name: CD
+
+on:
+  push:
+    branches-ignore:
+      - "*"
+
+jobs:
+  build:
+
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v4
+    - uses: actions/cache@v4
+      with:
+        path: ~/.m2/repository
+        key: ${{ runner.os }}-maven-${{ hashFiles('**/pom.xml') }}
+        restore-keys: ${{ runner.os }}-maven-
+    - name: Set up Graalvm
+      uses: graalvm/setup-graalvm@v1.2.1
+      with:
+        # Java version. See examples of supported syntax in the README file.
+        java-version: 21
+        distribution: graalvm-community
+        components: native-image
+        cache: maven
+        version: latst
+    - name: Build with Maven
+      run: mvn -Pnative
