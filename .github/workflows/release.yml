@@ -1,14 +1,17 @@
 name: CD
 
-on:
-  push:
-    branches-ignore:
-      - "*"
+on: [push]
 
 jobs:
   build:
 
-    runs-on: ubuntu-latest
+    runs-on: ${{ matrix.os }}
+
+    strategy:
+      matrix:
+        os:
+          - ubuntu-latest
+          - windows-latest
 
     steps:
     - uses: actions/checkout@v4
@@ -27,4 +30,11 @@ jobs:
         cache: maven
         version: latst
     - name: Build with Maven
-      run: mvn -Pnative
+      run: mvn -Pnative -DskipTests
+    - name: Upload release assets
+      uses: actions/upload-release-asset@v1
+      with:
+        upload_url: ${{ github.event.release.upload_url }}
+        asset_path: target/pom
+        asset_name: your-binary-file-${{ matrix.os }}
+        asset_content_type: application/octet-stream
