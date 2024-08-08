@@ -36,5 +36,5 @@ jobs:
       with:
         upload_url: ${{ github.event.release.upload_url }}
         asset_path: target/pom
-        asset_name: your-binary-file-${{ matrix.os }}
+        asset_name: pom-${{ matrix.os }}
         asset_content_type: application/octet-stream
